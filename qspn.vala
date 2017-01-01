@@ -3579,7 +3579,7 @@ namespace Netsukuku.Qspn
             }
         }
 
-        private string naddr_repr(Naddr my_naddr)
+        private string naddr_repr(IQspnNaddr my_naddr)
         {
             string my_naddr_str = "";
             string sep = "";
@@ -3589,6 +3589,15 @@ namespace Netsukuku.Qspn
                 sep = ":";
             }
             return my_naddr_str;
+        }
+
+        private string get_time_now(DateTime? _now=null)
+        {
+            DateTime now = _now == null ? new DateTime.now_local() : _now;
+            int now_msec = now.get_microsecond() / 1000;
+            if (now_msec < 10) return @"$(now.format("%FT%H:%M:%S")).00$(now_msec)";
+            if (now_msec < 100) return @"$(now.format("%FT%H:%M:%S")).0$(now_msec)";
+            return @"$(now.format("%FT%H:%M:%S")).$(now_msec)";
         }
 
         public IQspnEtpMessage
