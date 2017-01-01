@@ -3579,11 +3579,24 @@ namespace Netsukuku.Qspn
             }
         }
 
+        private string naddr_repr(Naddr my_naddr)
+        {
+            string my_naddr_str = "";
+            string sep = "";
+            for (int i = 0; i < levels; i++)
+            {
+                my_naddr_str = @"$(my_naddr.i_qspn_get_pos(i))$(sep)$(my_naddr_str)";
+                sep = ":";
+            }
+            return my_naddr_str;
+        }
+
         public IQspnEtpMessage
         get_full_etp(IQspnAddress requesting_address,
                      CallerInfo? _rpc_caller=null)
         throws QspnNotAcceptedError, QspnBootstrapInProgressError
         {
+            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
             if (!bootstrap_complete) throw new QspnBootstrapInProgressError.GENERIC("I am still in bootstrap.");
 
             assert(_rpc_caller != null);
@@ -3649,6 +3662,7 @@ namespace Netsukuku.Qspn
         public void send_etp(IQspnEtpMessage m, bool is_full, CallerInfo? _rpc_caller=null) throws QspnNotAcceptedError
         {
             assert(_rpc_caller != null);
+            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
             // The message comes from this arc.
             IQspnArc? arc = null;
@@ -3806,6 +3820,7 @@ namespace Netsukuku.Qspn
 
         public void got_prepare_destroy(CallerInfo? _rpc_caller=null)
         {
+            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_prepare_destroy.\n");
             // Verify that I am a ''connectivity'' identity.
             if (connectivity_from_level == 0) tasklet.exit_tasklet(null);
             // TODO check that the order came from the Coordinator
@@ -3820,6 +3835,7 @@ namespace Netsukuku.Qspn
         public void got_destroy(CallerInfo? _rpc_caller=null)
         {
             assert(_rpc_caller != null);
+            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_destroy.\n");
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
             // The message comes from this arc.
             IQspnArc? arc = null;
