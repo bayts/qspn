@@ -549,7 +549,7 @@ namespace Netsukuku.Qspn
     }
 
     internal ITasklet tasklet;
-    public delegate void PrintCallerInfoDelegate(CallerInfo rpc_caller);
+    public delegate void PrintCallerInfoDelegate(CallerInfo rpc_caller, QspnManager t);
     internal PrintCallerInfoDelegate print_caller_info;
     public class QspnManager : Object, IQspnManagerSkeleton
     {
@@ -3613,7 +3613,7 @@ namespace Netsukuku.Qspn
             {
                 CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
                 print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
-                print_caller_info(rpc_caller);
+                print_caller_info(rpc_caller, this);
             }
             if (!bootstrap_complete) throw new QspnBootstrapInProgressError.GENERIC("I am still in bootstrap.");
 
@@ -3683,7 +3683,7 @@ namespace Netsukuku.Qspn
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
             {
                 print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
-                print_caller_info(rpc_caller);
+                print_caller_info(rpc_caller, this);
             }
             // The message comes from this arc.
             IQspnArc? arc = null;
@@ -3845,7 +3845,7 @@ namespace Netsukuku.Qspn
             {
                 CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
                 print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_prepare_destroy.\n");
-                print_caller_info(rpc_caller);
+                print_caller_info(rpc_caller, this);
             }
             // Verify that I am a ''connectivity'' identity.
             if (connectivity_from_level == 0) tasklet.exit_tasklet(null);
@@ -3864,7 +3864,7 @@ namespace Netsukuku.Qspn
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
             {
                 print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_destroy.\n");
-                print_caller_info(rpc_caller);
+                print_caller_info(rpc_caller, this);
             }
             // The message comes from this arc.
             IQspnArc? arc = null;
