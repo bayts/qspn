@@ -549,6 +549,8 @@ namespace Netsukuku.Qspn
     }
 
     internal ITasklet tasklet;
+    public delegate void PrintCallerInfoDelegate(CallerInfo rpc_caller);
+    internal PrintCallerInfoDelegate print_caller_info;
     public class QspnManager : Object, IQspnManagerSkeleton
     {
         internal static Gee.EqualDataFunc<PairFingerprints> equal_func_pair_fingerprints = (a, b) => a.equals(b);
@@ -558,7 +560,8 @@ namespace Netsukuku.Qspn
                        int _max_paths,
                        double _max_common_hops_ratio,
                        int _arc_timeout,
-                       IQspnThresholdCalculator _threshold_calculator
+                       IQspnThresholdCalculator _threshold_calculator,
+                       owned PrintCallerInfoDelegate _print_caller_info
                       )
         {
             // Register serializable types
@@ -571,6 +574,7 @@ namespace Netsukuku.Qspn
             max_common_hops_ratio = _max_common_hops_ratio;
             arc_timeout = _arc_timeout;
             threshold_calculator = _threshold_calculator;
+            print_caller_info = (owned) _print_caller_info;
         }
         private static int max_paths;
         private static double max_common_hops_ratio;
@@ -3605,7 +3609,12 @@ namespace Netsukuku.Qspn
                      CallerInfo? _rpc_caller=null)
         throws QspnNotAcceptedError, QspnBootstrapInProgressError
         {
-            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
+            if (_rpc_caller != null)
+            {
+                CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
+                print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
+                print_caller_info(rpc_caller);
+            }
             if (!bootstrap_complete) throw new QspnBootstrapInProgressError.GENERIC("I am still in bootstrap.");
 
             assert(_rpc_caller != null);
@@ -3671,8 +3680,11 @@ namespace Netsukuku.Qspn
         public void send_etp(IQspnEtpMessage m, bool is_full, CallerInfo? _rpc_caller=null) throws QspnNotAcceptedError
         {
             assert(_rpc_caller != null);
-            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
+            {
+                print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
+                print_caller_info(rpc_caller);
+            }
             // The message comes from this arc.
             IQspnArc? arc = null;
             Timer t = new Timer(arc_timeout);
@@ -3829,7 +3841,12 @@ namespace Netsukuku.Qspn
 
         public void got_prepare_destroy(CallerInfo? _rpc_caller=null)
         {
-            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_prepare_destroy.\n");
+            if (_rpc_caller != null)
+            {
+                CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
+                print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_prepare_destroy.\n");
+                print_caller_info(rpc_caller);
+            }
             // Verify that I am a ''connectivity'' identity.
             if (connectivity_from_level == 0) tasklet.exit_tasklet(null);
             // TODO check that the order came from the Coordinator
@@ -3844,8 +3861,11 @@ namespace Netsukuku.Qspn
         public void got_destroy(CallerInfo? _rpc_caller=null)
         {
             assert(_rpc_caller != null);
-            if (_rpc_caller != null) print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_destroy.\n");
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
+            {
+                print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to got_destroy.\n");
+                print_caller_info(rpc_caller);
+            }
             // The message comes from this arc.
             IQspnArc? arc = null;
             Timer t = new Timer(arc_timeout);
