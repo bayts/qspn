@@ -860,7 +860,8 @@ void main(string[] args)
     tasklet = PthTaskletImplementer.get_tasklet_system();
 
     // pass tasklet system to module qspn
-    QspnManager.init(tasklet, max_paths, max_common_hops_ratio, arc_timeout, new FakeThresholdCalculator());
+    QspnManager.init(tasklet, max_paths, max_common_hops_ratio, arc_timeout, new FakeThresholdCalculator(),
+            (/*CallerInfo*/ rpc_caller, /*QspnManager*/ t) => {});
 
     test_file(args);
 
