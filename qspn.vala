@@ -3623,6 +3623,7 @@ namespace Netsukuku.Qspn
             {
                 CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
                 print(@"$(call_id): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
+                print(@"   requesting_address=$(naddr_repr((Naddr)requesting_address)).\n");
                 print_caller_info(rpc_caller, this);
             }
             if (!bootstrap_complete)
@@ -3699,10 +3700,13 @@ namespace Netsukuku.Qspn
 
         public void send_etp(IQspnEtpMessage m, bool is_full, CallerInfo? _rpc_caller=null) throws QspnNotAcceptedError
         {
+            string call_id = @"$(get_time_now())";
             assert(_rpc_caller != null);
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
             {
-                print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
+                print(@"$(call_id): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
+                print(@"   etp=$(json_string_object(m)).\n");
+                print(@"   is_full=$(is_full).\n");
                 print_caller_info(rpc_caller, this);
             }
             // The message comes from this arc.
@@ -3722,7 +3726,11 @@ namespace Netsukuku.Qspn
                 if (t.is_expired()) break;
                 tasklet.ms_wait(arc_timeout / 10);
             }
-            if (arc == null) throw new QspnNotAcceptedError.GENERIC("You are not in my arcs.");
+            if (arc == null)
+            {
+                print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): throwing QspnNotAcceptedError.\n");
+                throw new QspnNotAcceptedError.GENERIC("You are not in my arcs.");
+            }
 
             if (! (arc in my_arcs)) return;
             debug("An incoming ETP is received");
@@ -3731,6 +3739,7 @@ namespace Netsukuku.Qspn
                 arc_remove(arc);
                 // emit signal
                 arc_removed(arc, @"Qspn: RPC:send_etp: m is <null>");
+                print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): exiting tasklet without response.\n");
                 tasklet.exit_tasklet(null);
             }
             if (! (m is EtpMessage))
@@ -3741,6 +3750,7 @@ namespace Netsukuku.Qspn
                 arc_remove(arc);
                 // emit signal
                 arc_removed(arc, @"Qspn: RPC:send_etp: m is not EtpMessage, but $(m.get_type().name())");
+                print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): exiting tasklet without response.\n");
                 tasklet.exit_tasklet(null);
             }
             EtpMessage etp = (EtpMessage) m;
@@ -3751,6 +3761,7 @@ namespace Netsukuku.Qspn
                 arc_remove(arc);
                 // emit signal
                 arc_removed(arc, @"Qspn: RPC:send_etp: check_incoming_message not passed");
+                print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): exiting tasklet without response.\n");
                 tasklet.exit_tasklet(null);
             }
 
@@ -3763,6 +3774,7 @@ namespace Netsukuku.Qspn
                 if (lvl >= hooking_gnode_level)
                 {
                     // The sender is outside my hooking gnode. Ignore it.
+                    print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): ignore message, returning.\n");
                     return;
                 }
                 else
@@ -3782,6 +3794,7 @@ namespace Netsukuku.Qspn
                     if (! has_path_to_into_gnode)
                     {
                         // The ETP hasn't any destination outside my hooking gnode. Ignore it.
+                        print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): ignore message, returning.\n");
                         return;
                     }
                     else
@@ -3804,6 +3817,7 @@ namespace Netsukuku.Qspn
             catch (AcyclicError e)
             {
                 // Ignore this message
+                print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): ignore message, returning.\n");
                 return;
             }
             // Update my map. Collect changed paths.
@@ -3825,6 +3839,7 @@ namespace Netsukuku.Qspn
                 // now exit bootstrap, process all arcs, send full ETP to all.
                 exit_bootstrap_phase();
                 // No forward is needed.
+                print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): message processed, returning.\n");
                 return;
             }
 
@@ -3857,6 +3872,7 @@ namespace Netsukuku.Qspn
                     critical(@"QspnManager.send_etp: StubError in send to broadcast except arc $(arc_id): $(e.message)");
                 }
             }
+            print(@"$(get_time_now()): RPC call to send_etp received at $(call_id): message processed, returning.\n");
         }
 
         public void got_prepare_destroy(CallerInfo? _rpc_caller=null)
