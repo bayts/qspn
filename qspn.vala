@@ -3645,13 +3645,18 @@ namespace Netsukuku.Qspn
                      CallerInfo? _rpc_caller=null)
         throws QspnNotAcceptedError, QspnBootstrapInProgressError
         {
+            string call_id = @"$(get_time_now())";
             if (_rpc_caller != null)
             {
                 CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
-                print(@"$(get_time_now()): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
+                print(@"$(call_id): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
                 print_caller_info(rpc_caller, this);
             }
-            if (!bootstrap_complete) throw new QspnBootstrapInProgressError.GENERIC("I am still in bootstrap.");
+            if (!bootstrap_complete)
+            {
+                print(@"$(get_time_now()): RPC call to get_full_etp received at $(call_id): throwing QspnBootstrapInProgressError.\n");
+                throw new QspnBootstrapInProgressError.GENERIC("I am still in bootstrap.");
+            }
 
             assert(_rpc_caller != null);
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
@@ -3672,7 +3677,11 @@ namespace Netsukuku.Qspn
                 if (t.is_expired()) break;
                 tasklet.ms_wait(arc_timeout / 10);
             }
-            if (arc == null) throw new QspnNotAcceptedError.GENERIC("You are not in my arcs.");
+            if (arc == null)
+            {
+                print(@"$(get_time_now()): RPC call to get_full_etp received at $(call_id): throwing QspnNotAcceptedError.\n");
+                throw new QspnNotAcceptedError.GENERIC("You are not in my arcs.");
+            }
 
             if (! (requesting_address is IQspnNaddr))
             {
@@ -3682,6 +3691,7 @@ namespace Netsukuku.Qspn
                 arc_remove(arc);
                 // emit signal
                 arc_removed(arc, @"Qspn: RPC:get_full_etp: requesting_address is not IQspnNaddr");
+                print(@"$(get_time_now()): RPC call to get_full_etp received at $(call_id): exiting tasklet without response.\n");
                 tasklet.exit_tasklet(null);
             }
             IQspnNaddr requesting_naddr = (IQspnNaddr) requesting_address;
@@ -3710,6 +3720,7 @@ namespace Netsukuku.Qspn
             debug("Sending ETP on request");
             var ret = prepare_new_etp(etp_paths);
             assert(check_outgoing_message(ret));
+            print(@"$(get_time_now()): RPC call to get_full_etp received at $(call_id): returning ret=$(json_string_object(ret)).\n");
             return ret;
         }
 
