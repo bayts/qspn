@@ -3623,7 +3623,7 @@ namespace Netsukuku.Qspn
             {
                 CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
                 print(@"$(call_id): my_naddr $(naddr_repr(my_naddr)): got RPC call to get_full_etp.\n");
-                print(@"   requesting_address=$(naddr_repr((Naddr)requesting_address)).\n");
+                print(@"   requesting_address=$(naddr_repr((IQspnNaddr)requesting_address)).\n");
                 print_caller_info(rpc_caller, this);
             }
             if (!bootstrap_complete)
