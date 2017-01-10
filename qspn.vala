@@ -1239,9 +1239,6 @@ namespace Netsukuku.Qspn
                 debug("Sending reliable ETP to missing arc");
                 try {
                     assert(mgr.check_outgoing_message(m));
-                    print(@"$(get_time_now()): call send_etp.\n");
-                    print(@"   m=$(json_string_object(m)).\n");
-                    print(@"   is_full=$(is_full).\n");
                     stub.send_etp(m, is_full);
                 }
                 catch (QspnNotAcceptedError e) {
@@ -1369,9 +1366,6 @@ namespace Netsukuku.Qspn
                 debug("Forward ETP to all but the new arc");
                 try {
                     assert(check_outgoing_message(new_etp));
-                    print(@"$(get_time_now()): call send_etp.\n");
-                    print(@"   m=$(json_string_object(new_etp)).\n");
-                    print(@"   is_full=false.\n");
                     stub_send_to_others.send_etp(new_etp, false);
                 }
                 catch (QspnNotAcceptedError e) {
@@ -1394,9 +1388,6 @@ namespace Netsukuku.Qspn
             debug("Sending ETP to new arc");
             try {
                 assert(check_outgoing_message(full_etp));
-                print(@"$(get_time_now()): call send_etp.\n");
-                print(@"   m=$(json_string_object(full_etp)).\n");
-                print(@"   is_full=true.\n");
                 stub_send_to_arc.send_etp(full_etp, true);
             }
             catch (QspnNotAcceptedError e) {
@@ -1528,9 +1519,6 @@ namespace Netsukuku.Qspn
                 debug("Sending ETP to all");
                 try {
                     assert(check_outgoing_message(new_etp));
-                    print(@"$(get_time_now()): call send_etp.\n");
-                    print(@"   m=$(json_string_object(new_etp)).\n");
-                    print(@"   is_full=false.\n");
                     stub_send_to_all.send_etp(new_etp, false);
                 }
                 catch (QspnNotAcceptedError e) {
@@ -1677,9 +1665,6 @@ namespace Netsukuku.Qspn
                 debug("Sending ETP to all");
                 try {
                     assert(check_outgoing_message(new_etp));
-                    print(@"$(get_time_now()): call send_etp.\n");
-                    print(@"   m=$(json_string_object(new_etp)).\n");
-                    print(@"   is_full=false.\n");
                     stub_send_to_all.send_etp(new_etp, false);
                 }
                 catch (QspnNotAcceptedError e) {
@@ -2926,9 +2911,6 @@ namespace Netsukuku.Qspn
             debug("Sending ETP to all");
             try {
                 assert(check_outgoing_message(new_etp));
-                print(@"$(get_time_now()): call send_etp.\n");
-                print(@"   m=$(json_string_object(new_etp)).\n");
-                print(@"   is_full=false.\n");
                 stub_send_to_all.send_etp(new_etp, false);
             }
             catch (QspnNotAcceptedError e) {
@@ -3065,9 +3047,6 @@ namespace Netsukuku.Qspn
             debug("Sending ETP to all");
             try {
                 assert(check_outgoing_message(full_etp));
-                print(@"$(get_time_now()): call send_etp.\n");
-                print(@"   m=$(json_string_object(full_etp)).\n");
-                print(@"   is_full=true.\n");
                 stub_send_to_all.send_etp(full_etp, true);
             }
             catch (QspnNotAcceptedError e) {
@@ -3306,9 +3285,6 @@ namespace Netsukuku.Qspn
                     new MissingArcSendEtp(this, etp, false));
             try {
                 assert(check_outgoing_message(etp));
-                print(@"$(get_time_now()): call send_etp.\n");
-                print(@"   m=$(json_string_object(etp)).\n");
-                print(@"   is_full=false.\n");
                 stub_send_to_outer.send_etp(etp, false);
             } catch (QspnNotAcceptedError e) {
                 // a broadcast will never get a return value nor an error
@@ -3370,9 +3346,6 @@ namespace Netsukuku.Qspn
                         new MissingArcSendEtp(this, etp, false));
                 try {
                     assert(check_outgoing_message(etp));
-                    print(@"$(get_time_now()): call send_etp.\n");
-                    print(@"   m=$(json_string_object(etp)).\n");
-                    print(@"   is_full=false.\n");
                     stub_send_to_outer.send_etp(etp, false);
                 } catch (QspnNotAcceptedError e) {
                     // a broadcast will never get a return value nor an error
@@ -3870,9 +3843,6 @@ namespace Netsukuku.Qspn
                 debug("Forward ETP to all but the sender");
                 try {
                     assert(check_outgoing_message(new_etp));
-                    print(@"$(get_time_now()): call send_etp.\n");
-                    print(@"   m=$(json_string_object(new_etp)).\n");
-                    print(@"   is_full=false.\n");
                     stub_send_to_others.send_etp(new_etp, false);
                 }
                 catch (QspnNotAcceptedError e) {
