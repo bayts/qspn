@@ -3694,7 +3694,8 @@ namespace Netsukuku.Qspn
             debug("Sending ETP on request");
             var ret = prepare_new_etp(etp_paths);
             assert(check_outgoing_message(ret));
-            print(@"$(get_time_now()): RPC call to get_full_etp received at $(call_id): returning ret=$(json_string_object(ret)).\n");
+            string typename = ret.get_type().name();
+            print(@"$(get_time_now()): RPC call to get_full_etp received at $(call_id): returning $(typename) ret=$(json_string_object(ret)).\n");
             return ret;
         }
 
@@ -3705,7 +3706,8 @@ namespace Netsukuku.Qspn
             CallerInfo rpc_caller = (CallerInfo)_rpc_caller;
             {
                 print(@"$(call_id): my_naddr $(naddr_repr(my_naddr)): got RPC call to send_etp.\n");
-                print(@"   etp=$(json_string_object(m)).\n");
+                string typename = m.get_type().name();
+                print(@"   $(typename) etp=$(json_string_object(m)).\n");
                 print(@"   is_full=$(is_full).\n");
                 print_caller_info(rpc_caller, this);
             }
