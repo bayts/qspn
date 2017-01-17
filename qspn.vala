@@ -2959,13 +2959,14 @@ namespace Netsukuku.Qspn
                     nn_tot += 1;
                 }
                 IQspnFingerprint new_fp = my_fingerprints[0].i_qspn_construct(fp_set);
-                if (! new_fp.i_qspn_equals(my_fingerprints[1]))
+                IQspnFingerprint old_fp = my_fingerprints[1];
+                my_fingerprints[1] = new_fp;
+                if (! new_fp.i_qspn_equals(old_fp))
                 {
-                    my_fingerprints[1] = new_fp;
                     changes_in_my_gnodes = true;
                     changed_fp(1);
                 }
-                int new_nn = 1 + nn_tot;
+                int new_nn = my_nodes_inside[0] + nn_tot;
                 if (new_nn != my_nodes_inside[1])
                 {
                     my_nodes_inside[1] = new_nn;
@@ -3018,9 +3019,10 @@ namespace Netsukuku.Qspn
                     nn_tot += nn_d;
                 }
                 IQspnFingerprint new_fp = my_fingerprints[i-1].i_qspn_construct(fp_set);
-                if (! new_fp.i_qspn_equals(my_fingerprints[i]))
+                IQspnFingerprint old_fp = my_fingerprints[i];
+                my_fingerprints[i] = new_fp;
+                if (! new_fp.i_qspn_equals(old_fp))
                 {
-                    my_fingerprints[i] = new_fp;
                     changes_in_my_gnodes = true;
                     changed_fp(i);
                 }
