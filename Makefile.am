@@ -10,11 +10,15 @@ TESTS = \
 	test_split_signal \
 	test_not_split_signal \
 	test1 \
+	testbed01 \
+	testbed02 \
+	testbed03 \
 	$(NULL)
 
 check_PROGRAMS = \
 	test_serialize_helpers \
 	simulator \
+	testbed \
 	$(NULL)
 
 EXTRA_PROGRAMS = \
@@ -29,6 +33,11 @@ libqspn_la_SOURCES = \
 libqspn_la_VALAFLAGS = \
 	-H qspn.h \
 	--library qspn \
+	--vapidir $(GEE_PREFIX)/share/vala/vapi \
+	--vapidir $(JSON_PREFIX)/share/vala-0.32/vapi \
+	--vapidir $(TASKLETSYSTEM_VAPIDIR) \
+	--vapidir $(NTKDCOMMON_VAPIDIR) \
+	--vapidir $(NTKDRPC_VAPIDIR) \
 	--pkg gee-0.8 \
 	--pkg json-glib-1.0 \
 	--pkg tasklet-system \
@@ -62,6 +71,8 @@ test_serialize_helpers_SOURCES =  \
 	$(NULL)
 
 test_serialize_helpers_VALAFLAGS = \
+	--vapidir $(GEE_PREFIX)/share/vala/vapi \
+	--vapidir $(JSON_PREFIX)/share/vala-0.32/vapi \
 	--pkg gee-0.8 \
 	--pkg json-glib-1.0 \
 	$(NULL)
@@ -84,6 +95,7 @@ auto_graph_SOURCES = \
 	$(NULL)
 
 auto_graph_VALAFLAGS = \
+	--vapidir $(GEE_PREFIX)/share/vala/vapi \
 	--pkg gee-0.8 \
 	$(NULL)
 
@@ -106,6 +118,11 @@ simulator_SOURCES = \
 	$(NULL)
 
 simulator_VALAFLAGS = \
+	--vapidir $(GEE_PREFIX)/share/vala/vapi \
+	--vapidir $(TASKLETSYSTEM_VAPIDIR) \
+	--vapidir $(PTHTASKLET_VAPIDIR) \
+	--vapidir $(NTKDCOMMON_VAPIDIR) \
+	--vapidir $(NTKDRPC_VAPIDIR) \
 	--pkg gee-0.8 \
 	--pkg ntkd-common \
 	--pkg tasklet-system \
@@ -124,6 +141,49 @@ simulator_CPPFLAGS = \
 	$(NULL)
 
 simulator_LDADD = \
+	$(GOBJECT_LIBS) \
+	$(GEE_LIBS) \
+	$(NTKDCOMMON_LIBS) \
+	$(TASKLETSYSTEM_LIBS) \
+	$(PTHTASKLET_LIBS) \
+	$(NTKDRPC_LIBS) \
+	$(builddir)/libqspn.la \
+	$(NULL)
+
+testbed_SOURCES = \
+	testsuites/testbed/testbed.vala \
+	testsuites/testbed/testbed_01.vala \
+	testsuites/testbed/testbed_02.vala \
+	testsuites/testbed/testbed_03.vala \
+	testsuites/testbed/naddr.vala \
+	testsuites/testbed/serialize_helpers.vala \
+	qspn.vapi \
+	$(NULL)
+
+testbed_VALAFLAGS = \
+	--vapidir $(GEE_PREFIX)/share/vala/vapi \
+	--vapidir $(TASKLETSYSTEM_VAPIDIR) \
+	--vapidir $(PTHTASKLET_VAPIDIR) \
+	--vapidir $(NTKDCOMMON_VAPIDIR) \
+	--vapidir $(NTKDRPC_VAPIDIR) \
+	--pkg gee-0.8 \
+	--pkg ntkd-common \
+	--pkg tasklet-system \
+	--pkg pth-tasklet \
+	--pkg ntkdrpc \
+	$(NULL)
+
+testbed_CPPFLAGS = \
+	-w \
+	$(GOBJECT_CFLAGS) \
+	$(GEE_CFLAGS) \
+	$(NTKDCOMMON_CFLAGS) \
+	$(TASKLETSYSTEM_CFLAGS) \
+	$(PTHTASKLET_CFLAGS) \
+	$(NTKDRPC_CFLAGS) \
+	$(NULL)
+
+testbed_LDADD = \
 	$(GOBJECT_LIBS) \
 	$(GEE_LIBS) \
 	$(NTKDCOMMON_LIBS) \
