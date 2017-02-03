@@ -44,7 +44,8 @@ namespace Testbed03
         init_tasklet_system(tasklet);
 
         // static Qspn.init.
-        QspnManager.init(tasklet, max_paths, max_common_hops_ratio, arc_timeout, new ThresholdCalculator());
+        QspnManager.init(tasklet, max_paths, max_common_hops_ratio, arc_timeout, new ThresholdCalculator(),
+                         (/*CallerInfo*/ rpc_caller, /*QspnManager*/ t) => {});
 
         ArrayList<int> _gsizes;
         int levels;
